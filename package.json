@@ -1,0 +1,16 @@
+{
+  "name": "teabuds",
+  "version": "1.0.0",
+  "description": "Social Media App Teabuds - find nearby people to go out with!",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node start"
+  },
+  "author": "Nikolay Lyutov",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "mysql": "^2.18.1"
+  }
+}
