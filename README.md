@@ -1,3 +1,3 @@
-#Teabuds
-###Social Media App
-###Senior Thesis
+# Teabuds
+### Social Media App
+### Senior Thesis
