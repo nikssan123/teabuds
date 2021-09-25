@@ -5,12 +5,17 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node start"
+    "start": "node index.js",
+    "dev": "nodemon index.js"
   },
   "author": "Nikolay Lyutov",
   "license": "ISC",
   "dependencies": {
     "express": "^4.17.1",
-    "mysql": "^2.18.1"
+    "mysql": "^2.18.1",
+    "typeorm": "^0.2.37"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.13"
   }
 }
