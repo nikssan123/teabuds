@@ -1,5 +1,6 @@
 import { User } from "../models/Entity/User";
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
+import jwt from "jsonwebtoken";
 
 const register = async (req: Request, res: Response) => {
     const { username, email, password } = req.body;
@@ -8,29 +9,61 @@ const register = async (req: Request, res: Response) => {
         return res.send("You must specify username, email and password!");
     }
 
-    // const newUser = await  User.insert({ username, email, password });
-    const createdUser = await User.save(User.create({ username, email, password }));
+    const { id } = await User.save(User.create({ username, email, password }));
 
-    // const user = await userRepository.create({ username, email, password });
-    // const createdUser = await userRepository.save(user);
+    const token = jwt.sign(
+        {
+            id,
+            email,
+            username,
+        },
+        process.env.SECRET_KEY
+    );
 
-    res.send(createdUser);
+    return res.status(200).json({
+        email,
+        username,
+        token,
+    });
 };
 
-const login = async (req: Request, res: Response) => {
+const login = async (req: Request, res: Response, next: NextFunction) => {
     const { email, password } = req.body;
 
-    const user = await User.findOne({ email });
+    try {
+        const user = await User.findOne({ email });
+        const { username, id } = user;
 
-    console.log(user);
+        const isMatch = await user.comparePassword(password);
 
-    if (user) {
-        console.log(await user.comparePassword(password));
-    } else {
-        return res.send(`No user with email: ${email} found!`);
+        if (isMatch) {
+            const token = jwt.sign(
+                {
+                    id,
+                    email,
+                    username,
+                },
+                process.env.SECRET_KEY
+            );
+
+            return res.status(200).json({
+                id,
+                email,
+                username,
+                token,
+            });
+        } else {
+            return next({
+                status: 400,
+                message: "Invalid Email/Password",
+            });
+        }
+    } catch (e) {
+        return next({
+            status: 400,
+            message: "Invalid Email/Password",
+        });
     }
-
-    res.send(user);
 };
 
 export { register, login };
