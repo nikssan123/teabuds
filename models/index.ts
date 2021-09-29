@@ -1,6 +1,7 @@
 import { createConnection } from "typeorm";
 import { User } from "./Entity/User";
 
+// use mock table for testing -> process.env.NODE_ENV === "test"
 export default createConnection({
     type: "mysql",
     host: "localhost",
@@ -10,5 +11,5 @@ export default createConnection({
     database: process.env.DB_NAME,
     entities: [ User ],
     synchronize: true,
-    logging: true,
+    // logging: true,
 });

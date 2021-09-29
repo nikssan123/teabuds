@@ -30,6 +30,7 @@ const register = async (req: Request, res: Response) => {
 const login = async (req: Request, res: Response, next: NextFunction) => {
     const { email, password } = req.body;
 
+    // User.find({sk})
     try {
         const user = await User.findOne({ email });
         const { username, id } = user;
