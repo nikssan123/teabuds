@@ -1,15 +1,24 @@
-import { createConnection } from "typeorm";
-import { User } from "./Entity/User";
+import { ConnectionOptions, getConnectionManager } from "typeorm";
 
-// use mock table for testing -> process.env.NODE_ENV === "test"
-export default createConnection({
+import { User } from "./Entity/User";
+import { Post } from "./Entity/Post";
+import { Comments } from "./Entity/Comments";
+
+const options: ConnectionOptions = {
     type: "mysql",
     host: "localhost",
     port: 3306,
     username: "root",
     password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
-    entities: [ User ],
+    database: process.env.NODE_ENV === "test" ? process.env.DB_TEST_NAME : process.env.DB_NAME,
+    // can't pass ts and js files
+    // ts-node || node
+    // entities: [ __dirname + "/Entity/*.ts" ],
+    entities: [ User, Post, Comments ],
     synchronize: true,
-    // logging: true,
-});
+};
+
+const connectionManager = getConnectionManager();
+const connection = connectionManager.create(options);
+
+export default connection;

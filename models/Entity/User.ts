@@ -3,11 +3,16 @@ import {
     PrimaryGeneratedColumn,
     Column,
     BaseEntity,
+    OneToMany,
     BeforeInsert,
     BeforeUpdate,
     AfterLoad,
+    ManyToMany,
+    JoinTable,
 } from "typeorm";
+import { Post } from "./Post";
 import bcrypt from "bcrypt";
+import { Comments } from "./Comments";
 
 @Entity("user")
 export class User extends BaseEntity {
@@ -21,6 +26,21 @@ export class User extends BaseEntity {
 
     @Column({ nullable: false })
     password: string;
+
+    // relationship with Post -> OneToMany
+    // One user can have many posts; One post should have only one owner
+    @OneToMany(() => Post, post => post.user)
+    posts: Post[];
+
+    // relationship with Comments -> OneToMany
+    // One user can have many comments; One comment should have only one author
+    @OneToMany(() => Comments, comments => comments.user)
+    comments: Comments[];
+
+    // followings
+    @ManyToMany(() => User, user => user.following)
+    @JoinTable()
+    following: User[];
 
     private tempPassword: string;
 

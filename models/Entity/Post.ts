@@ -1,25 +1,33 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, ManyToOne, OneToMany } from "typeorm";
+import { User } from "./User";
+import { Comments } from "./Comments";
 
-@Entity("user")
+@Entity()
 export class Post extends BaseEntity {
     @PrimaryGeneratedColumn() id: number;
 
-    @Column() title: string;
+    @Column({ length: 75, nullable: false })
+    title: string;
 
-    @Column() description: string;
+    @Column({ default: "" })
+    description: string;
 
-    @Column() image: string;
+    @Column({ default: "" })
+    image: string;
 
-    @Column() likes: number;
+    @Column({ default: 0 })
+    likes: number;
 
     @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
     created: Date;
 
     // relationship with User -> ManyToOne
-    // likes: realationship with User - Post -> ManyToMany
+    // One user can have many posts; One post should have only one owner
+    @ManyToOne(() => User, user => user.posts)
+    user: User;
 
-    // @BeforeInsert()
-    // private async hashPassword() {
-    //     this.created = new Date();
-    // }
+    // relationship with Comments -> OneToMayn
+    // One post can have many comments; One comment is for one post
+    @OneToMany(() => Comments, comments => comments.post)
+    comments: Comments[];
 }
