@@ -11,7 +11,7 @@ import postRoutes from "./routes/post";
 import { Error, errorHandler } from "./helpers/error";
 
 // import middleware
-import { loginRequired, ensureCorrectUser } from "./middleware/auth";
+import { loginRequired } from "./middleware/auth";
 
 // Parse json and url params
 app.use(express.json());
@@ -19,7 +19,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // routes
 app.use("/api", authRoutes);
-app.use("/api/post", postRoutes);
+app.use("/api/post", loginRequired, postRoutes);
 
 // (Offset) skip and limit(take) methods -> load only 20 posts at the beginning
 app.get("/test", (req, res) => {

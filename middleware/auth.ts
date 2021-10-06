@@ -28,7 +28,7 @@ const ensureCorrectUser = async (req: Request, res: Response, next: NextFunction
         const token = req.headers.authorization.split(" ")[1];
 
         jwt.verify(token, process.env.SECRET_KEY, (err, decoded) => {
-            if (decoded && decoded.id === req.params.userId) {
+            if (decoded && decoded.id === Number(req.params.userId)) {
                 return next();
             } else {
                 return next({

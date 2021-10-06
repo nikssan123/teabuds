@@ -42,13 +42,32 @@ export class User extends BaseEntity {
     @JoinTable()
     following: User[];
 
+    // followers
+    @ManyToMany(() => User, user => user.followers)
+    @JoinTable()
+    followers: User[];
+
     private tempPassword: string;
 
+    // followersCount: number;
+
+    // add tempPassword -> check if password is changed
     @AfterLoad()
     private loadTempPassword(): void {
         this.tempPassword = this.password;
     }
 
+    // count the followers the user has -> no need to load the reliation
+    // @AfterLoad()
+    // async countFollowers() {
+    //     const count = User.createQueryBuilder("user")
+    //         .leftJoin("user.followers", "followers")
+    //         .loadRelationCountAndMap("user.followersCount", "user.followers");
+
+    //     this.followersCount = await count.getRawOne();
+    // }
+
+    // if the password is changed or new -> hash the password
     @BeforeUpdate()
     @BeforeInsert()
     private async hashPassword() {
@@ -57,6 +76,7 @@ export class User extends BaseEntity {
         }
     }
 
+    // add a method to the User.repository to compare passwords
     public async comparePassword(password: string) {
         const isMatch = await bcrypt.compare(password, this.password);
 
