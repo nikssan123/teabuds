@@ -23,7 +23,8 @@ export class Post extends BaseEntity {
 
     // relationship with User -> ManyToOne
     // One user can have many posts; One post should have only one owner
-    @ManyToOne(() => User, user => user.posts)
+    // when user is deleted -> delete the user's posts
+    @ManyToOne(() => User, user => user.posts, { onDelete: "CASCADE" })
     user: User;
 
     // relationship with Comments -> OneToMayn

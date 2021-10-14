@@ -8,6 +8,7 @@ const app = express();
 // import routes
 import authRoutes from "./routes/auth";
 import postRoutes from "./routes/post";
+import commentsRoutes from "./routes/comments";
 import { Error, errorHandler } from "./helpers/error";
 
 // import middleware
@@ -20,11 +21,7 @@ app.use(express.urlencoded({ extended: true }));
 // routes
 app.use("/api", authRoutes);
 app.use("/api/post", loginRequired, postRoutes);
-
-// (Offset) skip and limit(take) methods -> load only 20 posts at the beginning
-app.get("/test", (req, res) => {
-    res.status(201).json({ msg: "Success" });
-});
+app.use("/api/comments", commentsRoutes);
 
 // create error for 404 Not Found
 app.use((req, res, next) => {

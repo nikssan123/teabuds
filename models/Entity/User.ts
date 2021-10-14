@@ -64,7 +64,7 @@ export class User extends BaseEntity {
     //         .leftJoin("user.followers", "followers")
     //         .loadRelationCountAndMap("user.followersCount", "user.followers");
 
-    //     this.followersCount = await count.getRawOne();
+    //     this.followersCount = await count.getRawOne(
     // }
 
     // if the password is changed or new -> hash the password

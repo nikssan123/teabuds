@@ -12,14 +12,17 @@ import { Request, Response, NextFunction } from "express";
  */
 const createPost = async (req: Request, res: Response, next: NextFunction) => {
     const { title, description, image = "", likes = 0 } = req.body;
-    const { id } = req.params;
+    const { userId } = req.params;
 
     // create post
     const newPost = Post.create({ title, description, image, likes });
 
     // find user from req.params.id
     try {
-        const user = await User.find({ select: [ "id", "email", "username" ], where: { id } });
+        const user = await User.find({
+            select: [ "id", "email", "username" ],
+            where: { id: userId },
+        });
 
         // add the user to the post
         newPost.user = user[0];
@@ -33,6 +36,7 @@ const createPost = async (req: Request, res: Response, next: NextFunction) => {
     res.json({ newPost });
 };
 
+// (Offset) skip and limit(take) methods -> load only 20 posts at the beginning
 const getAllPosts = async (req: Request, res: Response, next: NextFunction) => {
     try {
         // get all posts
@@ -48,7 +52,10 @@ const getPost = async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
     try {
         // find a post by id, load comments and user relations
-        const [ post ] = await Post.find({ where: { id }, relations: [ "comments", "user" ] });
+        const [ post ] = await Post.find({
+            where: { id },
+            relations: [ "comments", "user", "comments.user" ],
+        });
 
         if (!post) {
             return next({ message: `Couldn't find a post with id: ${id}` });

@@ -9,10 +9,10 @@ export class Comments extends BaseEntity {
     @Column({ nullable: false })
     message: string;
 
-    @ManyToOne(() => Post, post => post.comments)
+    @ManyToOne(() => Post, post => post.comments, { onDelete: "CASCADE" })
     post: Post;
 
-    @ManyToOne(() => User, user => user.comments)
+    @ManyToOne(() => User, user => user.comments, { onDelete: "CASCADE" })
     user: User;
 
     @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
