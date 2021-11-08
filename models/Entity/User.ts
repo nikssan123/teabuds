@@ -27,6 +27,11 @@ export class User extends BaseEntity {
     @Column({ nullable: false })
     password: string;
 
+    @Column() passwordResetToken: string;
+
+    @Column({ type: "bigint" })
+    resetPasswordExpires: string;
+
     // relationship with Post -> OneToMany
     // One user can have many posts; One post should have only one owner
     @OneToMany(() => Post, post => post.user)

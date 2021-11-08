@@ -68,4 +68,52 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
     }
 };
 
-export { register, login };
+const resetPassword = async (req: Request, res: Response, next: NextFunction) => {
+    const { token } = req.params;
+    const { password1, password2 } = req.body;
+
+    if (!password1 || !password2) {
+        return next({
+            message: "You have to specify a password!",
+        });
+    }
+
+    try {
+        const [ user ] = await User.find({ where: { passwordResetToken: token } });
+
+        const date = new Date(Number(user.resetPasswordExpires));
+
+        if (!lessThanOneHourAgo(date)) {
+            return next({ message: "The reset token has expired!" });
+        }
+
+        if (password1 !== password2) {
+            return next({ message: "Passwords do not match!" });
+        }
+
+        user.password = password1;
+
+        await user.save();
+
+        res.json({ message: "Successfully updated password!" });
+    } catch (e) {
+        console.log(e);
+        return next({
+            status: 404,
+            message: "Couldn't find a user!",
+        });
+    }
+};
+
+// Utils
+
+const lessThanOneHourAgo = (date: Date): boolean => {
+    // date.getHours();
+    // const date1 = date.getTime();
+    const HOUR = 1000 * 60 * 60;
+    const anHourAgo = Date.now() - HOUR;
+
+    return date.getTime() > anHourAgo;
+};
+
+export { register, login, resetPassword };

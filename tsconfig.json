@@ -11,7 +11,8 @@
         "paths": {
             "*": [
                 "node_modules/*",
-                "tests/*"
+                "tests/*",
+                "client/*"
             ]
         },
         "experimentalDecorators": true,
