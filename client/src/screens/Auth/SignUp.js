@@ -47,7 +47,7 @@ const SignUp = ({ navigation }) => {
 
     return (
         <KeyboardAvoidingView style={{ flex: 1 }} behavior={behaviour}>
-            <ScrollView>
+            <ScrollView scrollEnabled={false}>
                 <View style={styles.container}>
                     <View style={styles.headerContainer}>
                         <Text category="h1" status="control">

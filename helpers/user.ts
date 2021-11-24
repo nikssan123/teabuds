@@ -17,7 +17,6 @@ const forgotPassword = async (req: Request, res: Response, next: NextFunction) =
             where: { email: req.body.email },
         });
 
-        // console.log()
         if (!user) {
             return next({ message: "No user is associated with this email!" });
         }

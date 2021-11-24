@@ -12,6 +12,7 @@ import authRoutes from "./routes/auth";
 import postRoutes from "./routes/post";
 import commentsRoutes from "./routes/comments";
 import userRoutes from "./routes/user";
+import exploreRoutes from "./routes/explorePost";
 import { Error, errorHandler } from "./helpers/error";
 
 // import middleware
@@ -27,7 +28,8 @@ app.use(express.urlencoded({ extended: true }));
 // routes
 app.use("/api", authRoutes);
 app.use("/api/post", loginRequired, postRoutes);
-app.use("/api/comments", commentsRoutes);
+app.use("/api/explore", loginRequired, exploreRoutes);
+app.use("/api/comments", loginRequired, commentsRoutes);
 app.use("/api/user", userRoutes);
 
 // create error for 404 Not Found

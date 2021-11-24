@@ -11,10 +11,11 @@ import BottomNavBar from "./BottomNavBar";
 // import Onboarding from '../screens/Auth/Onboarding/Onboarding';
 import SigninScreen from "../screens/Auth/SignIn";
 import SignupScreen from "../screens/Auth/SignUp";
+import Forgot from "../screens/Auth/Forgot";
 
-import HomeScreen from "../screens/Home";
-import ExploreScreen from "../screens/Explore";
-import UserScreen from "../screens/User";
+import HomeScreen from "./HomeNavigation";
+import ExploreScreen from "./ExploreNavigation";
+// import UserScreen from "../screens/User";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -26,25 +27,23 @@ export default () => {
         <NavigationContainer>
             {state.isLoggedIn ? (
                 <Tab.Navigator
-                    tabBar={props => <BottomTabBar {...props} />}
-                    tabBarOptions={{ keyboardHidesTabBar: true }}
+                    screenOptions={{
+                        headerShown: false,
+                        tabBarHideOnKeyboard: true,
+                        tabBarStyle: [ { display: "flex" } ],
+                    }}
+                    tabBar={props => <BottomNavBar {...props} />}
+                    // tabBarOptions={{ keyboardHidesTabBar: true }}
                 >
                     <Tab.Screen name="HomeScreen" component={HomeScreen} />
                     <Tab.Screen name="ExploreScreen" component={ExploreScreen} />
-                    <Tab.Screen name="UserScreen" component={UserScreen} />
+                    {/* <Tab.Screen name="UserScreen" component={UserScreen} /> */}
                 </Tab.Navigator>
             ) : (
                 <Stack.Navigator screenOptions={{ headerShown: false, gestureEnabled: false }}>
-                    <Stack.Screen
-                        name="Signup"
-                        component={SignupScreen}
-                        // options={{ headerShown: false }}
-                    />
-                    <Stack.Screen
-                        name="Signin"
-                        component={SigninScreen}
-                        // options={{ headerShown: false }}
-                    />
+                    <Stack.Screen name="Signup" component={SignupScreen} />
+                    <Stack.Screen name="Signin" component={SigninScreen} />
+                    <Stack.Screen name="Forgot" component={Forgot} />
                 </Stack.Navigator>
             )}
         </NavigationContainer>

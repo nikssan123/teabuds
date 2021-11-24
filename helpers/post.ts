@@ -1,6 +1,14 @@
 import { Post } from "../models/Entity/Post";
 import { User } from "../models/Entity/User";
 import { Request, Response, NextFunction } from "express";
+import cloudinary from "cloudinary";
+
+//Set up Cloudinary
+cloudinary.v2.config({
+    cloud_name: "nikssan123",
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 /**
  * ! same model applies for all the methods
@@ -11,14 +19,23 @@ import { Request, Response, NextFunction } from "express";
  * 
  */
 const createPost = async (req: Request, res: Response, next: NextFunction) => {
-    const { title, description, image = "", likes = 0 } = req.body;
+    const { title, description, likes = 0 } = req.body;
     const { userId } = req.params;
 
-    // create post
-    const newPost = Post.create({ title, description, image, likes });
+    let image = "";
 
     // find user from req.params.id
     try {
+        let imageId = "";
+        if (req.file) {
+            const result = await cloudinary.v2.uploader.upload(req.file.path);
+            image = result.secure_url;
+            imageId = result.public_id;
+        }
+
+        // create post
+        const newPost = Post.create({ title, description, image, imageId, likes });
+
         const user = await User.find({
             select: [ "id", "email", "username" ],
             where: { id: userId },
@@ -26,21 +43,21 @@ const createPost = async (req: Request, res: Response, next: NextFunction) => {
 
         // add the user to the post
         newPost.user = user[0];
+
+        // save and return the post
+        await newPost.save();
+
+        res.json({ newPost });
     } catch (e) {
         return next({ message: "No user found!" });
     }
-
-    // save and return the post
-    await newPost.save();
-
-    res.json({ newPost });
 };
 
 // (Offset) skip and limit(take) methods -> load only 20 posts at the beginning
 const getAllPosts = async (req: Request, res: Response, next: NextFunction) => {
     try {
         // get all posts
-        const posts = await Post.find({ relations: [ "user" ] });
+        const posts = await Post.find({ relations: [ "user" ], order: { id: "DESC" } });
 
         res.json(posts);
     } catch (e) {
@@ -110,17 +127,22 @@ const editPost = async (req: Request, res: Response, next: NextFunction) => {
 
 const deletePost = async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
+
     try {
-        // find post and delete post
+        // find post and delete it
         const [ post ] = await Post.find({ where: { id } });
 
         if (!post) {
             return next({ message: `Couldn't find a post with id: ${id}` });
         }
 
+        if (post.imageId) {
+            await cloudinary.v2.uploader.destroy(post.imageId);
+        }
+
         await post.remove();
 
-        res.json({ message: `Successfully deleted the post with id: ${id}` });
+        res.json({ message: `Successfully deleted the post with id: ${id}`, id });
     } catch (e) {
         console.log(e);
         return next({ message: `Couldn't find a post with id: ${id}` });

@@ -1,5 +1,5 @@
 import React from "react";
-import { BottomNavigation, BottomNavigationTab } from "@ui-kitten/components";
+import { BottomNavigation, BottomNavigationTab, Icon } from "@ui-kitten/components";
 
 const PersonIcon = props => <Icon {...props} name="person-outline" />;
 
@@ -14,7 +14,7 @@ const BottomTabBar = ({ navigation, state }) => (
     >
         <BottomNavigationTab title="Home" icon={HomeIcon} />
         <BottomNavigationTab title="Explore" icon={MapIcon} />
-        <BottomNavigationTab title="User" icon={PersonIcon} />
+        {/* <BottomNavigationTab title="User" icon={PersonIcon} /> */}
     </BottomNavigation>
 );
 

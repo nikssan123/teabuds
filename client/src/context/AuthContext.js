@@ -27,8 +27,8 @@ const AuthProvider = ({ children }) => {
         try {
             const token = await AsyncStorage.getItem("token");
             if (token) {
-                const { email } = jwt(token);
-                dispatch({ type: "SIGNIN", payload: { email } });
+                const { email, id } = jwt(token);
+                dispatch({ type: "SIGNIN", payload: { email, id } });
             }
             // set token to axios
             setTokenHeader(token);
@@ -41,20 +41,20 @@ const AuthProvider = ({ children }) => {
         return new Promise(async (res, rej) => {
             try {
                 // send axios call
-                const res = await axios.post("http://10.0.2.2:8081/api/register", {
+                const response = await axios.post("http://10.0.2.2:8081/api/register", {
                     username,
                     email,
                     password,
                 });
 
-                if (res.data) {
-                    const { token, email } = res.data;
+                if (response.data) {
+                    const { token, email, id } = response.data;
 
                     // set item in Local Storage
-                    AsyncStorage.setItem("token", token);
+                    await AsyncStorage.setItem("token", token);
 
                     //  set email to store
-                    dispatch({ type: "SIGNIN", payload: { email } });
+                    dispatch({ type: "SIGNIN", payload: { email, id } });
 
                     //  set token to axios defaults
                     setTokenHeader(token);
@@ -73,19 +73,19 @@ const AuthProvider = ({ children }) => {
         return new Promise(async (res, rej) => {
             try {
                 // send axios call
-                const res = await axios.post("http://10.0.2.2:8081/api/login", {
+                const response = await axios.post("http://10.0.2.2:8081/api/login", {
                     email,
                     password,
                 });
 
-                if (res.data) {
-                    const { token, email } = res.data;
+                if (response.data) {
+                    const { token, email, id } = response.data;
 
                     // set item in Local Storage
-                    AsyncStorage.setItem("token", token);
+                    await AsyncStorage.setItem("token", token);
 
                     //  set email to store
-                    dispatch({ type: "SIGNIN", payload: { email } });
+                    dispatch({ type: "SIGNIN", payload: { email, id } });
 
                     //  set token to axios defaults
                     setTokenHeader(token);
@@ -100,19 +100,32 @@ const AuthProvider = ({ children }) => {
         });
     };
 
-    const logout = () => {
+    const logout = async () => {
         dispatch({ type: "LOGOUT" });
-        AsyncStorage.removeItem("token");
+        await AsyncStorage.removeItem("token");
         setTokenHeader(false);
     };
 
-    const contextValue = useMemo(() => ({ state, tryLocalSignin, signin, signup, logout }), [
-        state,
-        tryLocalSignin,
-        signin,
-        signup,
-        logout,
-    ]);
+    const forgot = async email => {
+        return new Promise(async (res, rej) => {
+            try {
+                // send axios call
+                const response = await axios.post("http://10.0.2.2:8081/api/user/forgot", {
+                    email,
+                });
+
+                return res({ message: response.data.message });
+            } catch (e) {
+                console.log(e);
+                return rej({ error: "Something Went Wrong!" });
+            }
+        });
+    };
+
+    const contextValue = useMemo(
+        () => ({ state, tryLocalSignin, signin, signup, logout, forgot }),
+        [ state, tryLocalSignin, signin, signup, logout, forgot ]
+    );
 
     return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>;
 };

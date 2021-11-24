@@ -43,9 +43,14 @@ const SignIn = ({ navigation }) => {
     const onSignUpButtonPress = () => {
         navigation.navigate("Signup");
     };
+
+    const onForgotPasswordButtonPress = () => {
+        navigation.navigate("Forgot");
+    };
+
     return (
         <KeyboardAvoidingView style={{ flex: 1 }} behavior={behaviour}>
-            <ScrollView>
+            <ScrollView scrollEnabled={false}>
                 <View style={styles.container}>
                     <View style={styles.headerContainer}>
                         <Text category="h1" status="control">
@@ -63,6 +68,7 @@ const SignIn = ({ navigation }) => {
                                 accessoryRight={props => <Icon {...props} name="email-outline" />}
                                 value={email}
                                 onChangeText={setEmail}
+                                require
                             />
                             <Input
                                 label="Password *"
@@ -71,6 +77,7 @@ const SignIn = ({ navigation }) => {
                                 value={password}
                                 secureTextEntry={!passwordVisible}
                                 onChangeText={setPassword}
+                                require
                             />
 
                             <View style={styles.forgotPasswordContainer}>
@@ -78,7 +85,7 @@ const SignIn = ({ navigation }) => {
                                     style={styles.forgotPasswordButton}
                                     appearance="ghost"
                                     status="basic"
-                                    // onPress={onForgotPasswordButtonPress}
+                                    onPress={onForgotPasswordButtonPress}
                                 >
                                     Forgot your password?
                                 </Button>

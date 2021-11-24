@@ -3,6 +3,7 @@ import { ConnectionOptions, getConnectionManager } from "typeorm";
 import { User } from "./Entity/User";
 import { Post } from "./Entity/Post";
 import { Comments } from "./Entity/Comments";
+import { ExplorePost } from "./Entity/ExplorePost";
 
 const options: ConnectionOptions = {
     type: "mysql",
@@ -14,7 +15,7 @@ const options: ConnectionOptions = {
     // can't pass ts and js files
     // ts-node || node
     // entities: [ __dirname + "/Entity/*.ts" ],
-    entities: [ User, Post, Comments ],
+    entities: [ User, Post, Comments, ExplorePost ],
     synchronize: true,
 };
 

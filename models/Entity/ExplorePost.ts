@@ -1,9 +1,22 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, ManyToOne, OneToMany } from "typeorm";
+import {
+    Entity,
+    PrimaryGeneratedColumn,
+    Column,
+    BaseEntity,
+    ManyToOne,
+    OneToMany,
+    Double,
+} from "typeorm";
 import { User } from "./User";
-import { Comments } from "./Comments";
+
+enum Drink {
+    Tea = "Tea",
+    Coffee = "Coffee",
+    Alcohol = "Alcoholic Beverage",
+}
 
 @Entity()
-export class Post extends BaseEntity {
+export class ExplorePost extends BaseEntity {
     @PrimaryGeneratedColumn() id: number;
 
     @Column({ length: 75, nullable: false })
@@ -12,14 +25,19 @@ export class Post extends BaseEntity {
     @Column({ default: "" })
     description: string;
 
-    @Column({ default: "" })
-    image: string;
+    @Column({ type: "decimal", precision: 12, scale: 9 })
+    latitude: number;
 
-    @Column({ default: "" })
-    imageId: string;
+    @Column({ type: "decimal", precision: 12, scale: 9 })
+    longitude: number;
 
-    @Column({ default: 0 })
-    likes: number;
+    @Column() city: string;
+
+    @Column() drink: Drink;
+
+    @Column() phone: number;
+
+    @Column() email: string;
 
     @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
     created: Date;
@@ -29,9 +47,4 @@ export class Post extends BaseEntity {
     // when user is deleted -> delete the user's posts
     @ManyToOne(() => User, user => user.posts, { onDelete: "CASCADE" })
     user: User;
-
-    // relationship with Comments -> OneToMayn
-    // One post can have many comments; One comment is for one post
-    @OneToMany(() => Comments, comments => comments.post)
-    comments: Comments[];
 }
