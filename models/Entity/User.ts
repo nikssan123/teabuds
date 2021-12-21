@@ -62,16 +62,6 @@ export class User extends BaseEntity {
         this.tempPassword = this.password;
     }
 
-    // count the followers the user has -> no need to load the reliation
-    // @AfterLoad()
-    // async countFollowers() {
-    //     const count = User.createQueryBuilder("user")
-    //         .leftJoin("user.followers", "followers")
-    //         .loadRelationCountAndMap("user.followersCount", "user.followers");
-
-    //     this.followersCount = await count.getRawOne(
-    // }
-
     // if the password is changed or new -> hash the password
     @BeforeUpdate()
     @BeforeInsert()

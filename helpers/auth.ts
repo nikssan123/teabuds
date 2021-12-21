@@ -9,23 +9,32 @@ const register = async (req: Request, res: Response) => {
         return res.send("You must specify username, email and password!");
     }
 
-    const { id } = await User.save(User.create({ username, email, password }));
+    if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
+        return res.json({ message: "Invalid Email!" });
+    }
 
-    const token = jwt.sign(
-        {
+    try {
+        const user = await User.create({ username, email, password });
+        const { id } = await User.save(user);
+
+        const token = jwt.sign(
+            {
+                id,
+                email,
+                username,
+            },
+            process.env.SECRET_KEY
+        );
+
+        return res.status(200).json({
             id,
             email,
             username,
-        },
-        process.env.SECRET_KEY
-    );
-
-    return res.status(200).json({
-        id,
-        email,
-        username,
-        token,
-    });
+            token,
+        });
+    } catch (e) {
+        return res.json({ message: "Something went wrong!" });
+    }
 };
 
 const login = async (req: Request, res: Response, next: NextFunction) => {

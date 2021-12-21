@@ -24,7 +24,7 @@ const options = {
 // fail the test after 10s
 jest.setTimeout(10000);
 
-describe("Sample Test", () => {
+describe("Authentication Test", () => {
     beforeAll(async () => {
         await createConnection(options);
     });
